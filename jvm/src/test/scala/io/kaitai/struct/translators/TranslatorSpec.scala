@@ -25,6 +25,7 @@ class TranslatorSpec extends AnyFunSpec {
       everybody("1000000000", "1000000000")
       everybodyExcept("100000000000", "100000000000", ResultMap(
         CppCompiler -> "100000000000LL",
+        QtCppCompiler -> "100000000000LL",
         GoCompiler -> "int64(100000000000)",
         JavaCompiler -> "100000000000L"
       ))
@@ -36,18 +37,21 @@ class TranslatorSpec extends AnyFunSpec {
       // 0x8000_0000
       everybodyExcept("2147483648", "2147483648", ResultMap(
         CppCompiler -> "2147483648UL",
+        QtCppCompiler -> "2147483648UL",
         GoCompiler -> "uint32(2147483648)",
         JavaCompiler -> "2147483648L",
       ))
       // 0xffff_ffff
       everybodyExcept("4294967295", "4294967295", ResultMap(
         CppCompiler -> "4294967295UL",
+        QtCppCompiler -> "4294967295UL",
         GoCompiler -> "uint32(4294967295)",
         JavaCompiler -> "4294967295L",
       ))
       // 0x1_0000_0000
       everybodyExcept("4294967296", "4294967296", ResultMap(
         CppCompiler -> "4294967296LL",
+        QtCppCompiler -> "4294967296LL",
         GoCompiler -> "int64(4294967296)",
         JavaCompiler -> "4294967296L",
       ))
@@ -57,12 +61,14 @@ class TranslatorSpec extends AnyFunSpec {
       // -0x8000_0000
       everybodyExcept("-2147483648", "-2147483648", ResultMap(
         CppCompiler -> "(-2147483647 - 1)",
+        QtCppCompiler -> "(-2147483647 - 1)",
         LuaCompiler -> "(-2147483647 - 1)",
         PHPCompiler -> "(-2147483647 - 1)",
       ))
       // -0x8000_0001
       everybodyExcept("-2147483649", "-2147483649", ResultMap(
         CppCompiler -> "-2147483649LL",
+        QtCppCompiler -> "-2147483649LL",
         GoCompiler -> "int64(-2147483649)",
         JavaCompiler -> "-2147483649L",
       ))
@@ -70,12 +76,14 @@ class TranslatorSpec extends AnyFunSpec {
       // 0x7fff_ffff_ffff_ffff
       everybodyExcept("9223372036854775807", "9223372036854775807", ResultMap(
         CppCompiler -> "9223372036854775807LL",
+        QtCppCompiler -> "9223372036854775807LL",
         GoCompiler -> "int64(9223372036854775807)",
         JavaCompiler -> "9223372036854775807L",
       ))
       // 0x8000_0000_0000_0000
       everybodyExcept("9223372036854775808", "9223372036854775808", ResultMap(
         CppCompiler -> "9223372036854775808ULL",
+        QtCppCompiler -> "9223372036854775808ULL",
         GoCompiler -> "uint64(9223372036854775808)",
         JavaCompiler -> "0x8000000000000000L",
         LuaCompiler -> "0x8000000000000000",
@@ -84,6 +92,7 @@ class TranslatorSpec extends AnyFunSpec {
       // 0xffff_ffff_ffff_ffff
       everybodyExcept("18446744073709551615", "18446744073709551615", ResultMap(
         CppCompiler -> "18446744073709551615ULL",
+        QtCppCompiler -> "18446744073709551615ULL",
         GoCompiler -> "uint64(18446744073709551615)",
         JavaCompiler -> "0xffffffffffffffffL",
         LuaCompiler -> "0xffffffffffffffff",
@@ -92,12 +101,14 @@ class TranslatorSpec extends AnyFunSpec {
       // -0x7fff_ffff_ffff_ffff
       everybodyExcept("-9223372036854775807", "-9223372036854775807", ResultMap(
         CppCompiler -> "-9223372036854775807LL",
+        QtCppCompiler -> "-9223372036854775807LL",
         GoCompiler -> "int64(-9223372036854775807)",
         JavaCompiler -> "-9223372036854775807L",
       ))
       // -0x8000_0000_0000_0000
       everybodyExcept("-9223372036854775808", "-9223372036854775808", ResultMap(
         CppCompiler -> "(-9223372036854775807LL - 1)",
+        QtCppCompiler -> "(-9223372036854775807LL - 1)",
         GoCompiler -> "int64(-9223372036854775808)",
         JavaCompiler -> "-9223372036854775808L",
         LuaCompiler -> "(-9223372036854775807 - 1)",
@@ -209,6 +220,7 @@ class TranslatorSpec extends AnyFunSpec {
     describe(".to_s") {
       full("42.to_s", CalcIntType, CalcStrType, ResultMap(
         CppCompiler -> "kaitai::kstream::to_string(42)",
+        QtCppCompiler -> "kaitai::kstream::to_string(42)",
         CSharpCompiler -> "42.ToString()",
         GoCompiler -> "strconv.FormatInt(int64(42), 10)",
         JavaCompiler -> "Long.toString(42)",
@@ -222,6 +234,7 @@ class TranslatorSpec extends AnyFunSpec {
 
       full("(a + 42).to_s", CalcIntType, CalcStrType, ResultMap(
         CppCompiler -> "kaitai::kstream::to_string(a() + 42)",
+        QtCppCompiler -> "kaitai::kstream::to_string(a() + 42)",
         CSharpCompiler -> "(A + 42).ToString()",
         GoCompiler -> "strconv.FormatInt(int64(this.A + 42), 10)",
         JavaCompiler -> "Long.toString(a() + 42)",
@@ -235,6 +248,7 @@ class TranslatorSpec extends AnyFunSpec {
 
       full("a + 42.to_s", CalcStrType, CalcStrType, ResultMap(
         CppCompiler -> "a() + kaitai::kstream::to_string(42)",
+        QtCppCompiler -> "a() + kaitai::kstream::to_string(42)",
         CSharpCompiler -> "A + 42.ToString()",
         GoCompiler -> "this.A + strconv.FormatInt(int64(42), 10)",
         JavaCompiler -> "a() + Long.toString(42)",
@@ -251,6 +265,7 @@ class TranslatorSpec extends AnyFunSpec {
   describe("ternary operator") {
     full("2 < 3 ? \"foo\" : \"bar\"", CalcIntType, CalcStrType, ResultMap(
       CppCompiler -> "((2 < 3) ? (std::string(\"foo\")) : (std::string(\"bar\")))",
+      QtCppCompiler -> "((2 < 3) ? (std::string(\"foo\")) : (std::string(\"bar\")))",
       CSharpCompiler -> "(2 < 3 ? \"foo\" : \"bar\")",
       GoCompiler ->
         """var tmp1 string;
@@ -285,6 +300,7 @@ class TranslatorSpec extends AnyFunSpec {
   describe("boolean literals") {
     full("true", CalcBooleanType, CalcBooleanType, ResultMap(
       CppCompiler -> "true",
+      QtCppCompiler -> "true",
       CSharpCompiler -> "true",
       GoCompiler -> "true",
       JavaCompiler -> "true",
@@ -298,6 +314,7 @@ class TranslatorSpec extends AnyFunSpec {
 
     full("false", CalcBooleanType, CalcBooleanType, ResultMap(
       CppCompiler -> "false",
+      QtCppCompiler -> "false",
       CSharpCompiler -> "false",
       GoCompiler -> "false",
       JavaCompiler -> "false",
@@ -313,6 +330,7 @@ class TranslatorSpec extends AnyFunSpec {
   describe("boolean operations") {
     full("some_bool.to_i", CalcBooleanType, CalcIntType, ResultMap(
       CppCompiler -> "((some_bool()) ? 1 : 0)",
+      QtCppCompiler -> "((some_bool()) ? 1 : 0)",
       CSharpCompiler -> "(SomeBool ? 1 : 0)",
       GoCompiler ->
         """tmp1 := 0
@@ -333,6 +351,7 @@ class TranslatorSpec extends AnyFunSpec {
   describe("member access") {
     full("foo_str", CalcStrType, CalcStrType, ResultMap(
       CppCompiler -> "foo_str()",
+      QtCppCompiler -> "foo_str()",
       CSharpCompiler -> "FooStr",
       GoCompiler -> "this.FooStr",
       JavaCompiler -> "fooStr()",
@@ -346,6 +365,7 @@ class TranslatorSpec extends AnyFunSpec {
 
     full("foo_block", userOwnedType(List("block")), userBorrowedType(List("block")), ResultMap(
       CppCompiler -> "foo_block()",
+      QtCppCompiler -> "foo_block()",
       CSharpCompiler -> "FooBlock",
       GoCompiler -> "this.FooBlock",
       JavaCompiler -> "fooBlock()",
@@ -359,6 +379,7 @@ class TranslatorSpec extends AnyFunSpec {
 
     full("foo.bar", FooBarProvider, CalcStrType, ResultMap(
       CppCompiler -> "foo()->bar()",
+      QtCppCompiler -> "foo()->bar()",
       CSharpCompiler -> "Foo.Bar",
       GoCompiler -> "this.Foo.Bar",
       JavaCompiler -> "foo().bar()",
@@ -372,6 +393,7 @@ class TranslatorSpec extends AnyFunSpec {
 
     full("foo.inner.baz", FooBarProvider, CalcIntType, ResultMap(
       CppCompiler -> "foo()->inner()->baz()",
+      QtCppCompiler -> "foo()->inner()->baz()",
       CSharpCompiler -> "Foo.Inner.Baz",
       GoCompiler -> "this.Foo.Inner.Baz",
       JavaCompiler -> "foo().inner().baz()",
@@ -385,6 +407,7 @@ class TranslatorSpec extends AnyFunSpec {
 
     full("_root.foo", userOwnedType(List("top_class", "block")), userBorrowedType(List("top_class", "block")), ResultMap(
       CppCompiler -> "_root()->foo()",
+      QtCppCompiler -> "_root()->foo()",
       CSharpCompiler -> "M_Root.Foo",
       GoCompiler -> "this._root.Foo",
       JavaCompiler -> "_root().foo()",
@@ -398,6 +421,7 @@ class TranslatorSpec extends AnyFunSpec {
 
     full("a != 2 and a != 5", CalcIntType, CalcBooleanType, ResultMap(
       CppCompiler -> " ((a() != 2) && (a() != 5)) ",
+      QtCppCompiler -> " ((a() != 2) && (a() != 5)) ",
       CSharpCompiler -> " ((A != 2) && (A != 5)) ",
       GoCompiler -> " ((this.A != 2) && (this.A != 5)) ",
       JavaCompiler -> " ((a() != 2) && (a() != 5)) ",
@@ -977,6 +1001,7 @@ class TranslatorSpec extends AnyFunSpec {
 
       val langs = ListMap[LanguageCompilerStatic, AbstractTranslator with TypeDetector](
         CppCompiler -> new CppTranslator(tp, new CppImportList(), new CppImportList(), RuntimeConfig()),
+        QtCppCompiler -> new QtCppTranslator(tp, new CppImportList(), new CppImportList(), RuntimeConfig()),
         CSharpCompiler -> new CSharpTranslator(tp, new ImportList()),
         GoCompiler -> new GoTranslator(goOutput, tp, new ImportList()),
         JavaCompiler -> new JavaTranslator(tp, new ImportList()),

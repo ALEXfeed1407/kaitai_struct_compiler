@@ -11,6 +11,7 @@ object LanguageCompilerStatic {
   val NAME_TO_CLASS: Map[String, LanguageCompilerStatic] = Map(
     "construct" -> ConstructClassCompiler,
     "cpp_stl" -> CppCompiler,
+    "qt" -> QtCppCompiler,
     "csharp" -> CSharpCompiler,
     "graphviz" -> GraphvizClassCompiler,
     "go" -> GoCompiler,

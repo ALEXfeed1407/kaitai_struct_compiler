@@ -8,6 +8,7 @@ import io.kaitai.struct.JavaMain.CLIConfig
 import io.kaitai.struct.format.{ClassSpec, ClassSpecs, KSVersion}
 import io.kaitai.struct.formats.JavaKSYParser
 import io.kaitai.struct.languages.CppCompiler
+import io.kaitai.struct.languages.QtCppCompiler
 import io.kaitai.struct.languages.components.LanguageCompilerStatic
 import io.kaitai.struct.problems.{CompilationProblem, CompilationProblemException, ErrorInInput}
 
