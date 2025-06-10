@@ -479,7 +479,7 @@ class QtCppCompiler(
         }
         s"$kstreamName::process_rotate_left($srcExpr, $expr)"
       case ProcessCustom(name, args) =>
-        val procClass = name.map((x) => type2class(x)).mkString("::")
+        val procClass = s"kaitai::${name.map(type2class).mkString("::")}"
 
         val procName = s"_process_${idToStr(varSrc)}"
 
@@ -841,7 +841,7 @@ class QtCppCompiler(
     ensureMode(PrivateAccess)
     outHdr.puts(s"bool ${calculatedFlagForName(attrName)};")
     outHdr.puts(s"${kaitaiType2NativeType(attrType)} ${privateMemberName(attrName)};")
-    outHdr.puts(s"Q_PROPERTY(${kaitaiType2NativeType(attrType)} ${attrName.humanReadable} MEMBER ${privateMemberName(attrName)})")
+    outHdr.puts(s"Q_PROPERTY(${kaitaiType2NativeType(attrType)} ${attrName.humanReadable} READ ${publicMemberName(attrName)})")
     declareNullFlag(attrName, isNullable)
   }
 
